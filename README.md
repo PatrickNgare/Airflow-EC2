@@ -1,5 +1,4 @@
-# Airflow-EC2
-This is guide on apache airflow installation on AWS  EC2
+```markdown
 # Small EC2 Instance Airflow Tutorial
 
 ## EC2 Configuration
@@ -15,86 +14,131 @@ After launching your EC2 instance, connect to it in aws
 
 
    sudo apt update
-Install Python 3 and pip:
+   ```
 
-sudo apt install python3-pip
-Install SQLite3:
+2. Install Python 3 and pip:
+   ```bash
+   sudo apt install python3-pip
+   ```
 
-sudo apt install sqlite3
-Install the Python 3.10 virtual environment package:
+3. Install SQLite3:
+   ```bash
+   sudo apt install sqlite3
+   ```
 
-sudo apt install python3.10-venv
-Create a Python virtual environment:
+4. Install the Python 3.10 virtual environment package:
+   ```bash
+   sudo apt install python3.10-venv
+   ```
 
-python3 -m venv venv
-Activate the virtual environment:
+5. Create a Python virtual environment:
+   ```bash
+   python3 -m venv venv
+   ```
 
-source venv/bin/activate
-(Optional) Install PostgreSQL development libraries:
+6. Activate the virtual environment:
+   ```bash
+   source venv/bin/activate
+   ```
 
-sudo apt-get install libpq-dev
-Install Apache Airflow with PostgreSQL support:
+7. (Optional) Install PostgreSQL development libraries:
+   ```bash
+   sudo apt-get install libpq-dev
+   ```
 
-pip install "apache-airflow[postgres]==2.5.0" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.0/constraints-3.7.txt"
-Initialize the Airflow database:
+8. Install Apache Airflow with PostgreSQL support:
+   ```bash
+   pip install "apache-airflow[postgres]==2.5.0" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.0/constraints-3.7.txt"
+   ```
 
-airflow db init
-Install PostgreSQL and its contrib package:
+9. Initialize the Airflow database:
+   ```bash
+   airflow db init
+   ```
 
-sudo apt-get install postgresql postgresql-contrib
-Switch to the PostgreSQL user:
+10. Install PostgreSQL and its contrib package:
+    ```bash
+    sudo apt-get install postgresql postgresql-contrib
+    ```
 
-sudo -i -u postgres
-Access the PostgreSQL shell:
+11. Switch to the PostgreSQL user:
+    ```bash
+    sudo -i -u postgres
+    ```
 
-psql
-Create the Airflow database and user:
+12. Access the PostgreSQL shell:
+    ```bash
+    psql
+    ```
 
-CREATE DATABASE airflow;
-CREATE USER airflow WITH PASSWORD 'airflow';
-GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
-Exit the PostgreSQL shell by pressing Ctrl + D.
+13. Create the Airflow database and user:
+    ```sql
+    CREATE DATABASE airflow;
+    CREATE USER airflow WITH PASSWORD 'airflow';
+    GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
+    ```
 
-Navigate to the Airflow directory:
+14. Exit the PostgreSQL shell by pressing `Ctrl + D`.
 
-cd airflow
-Replace the connection string in the airflow.cfg file to use PostgreSQL instead of SQLite:
+15. Navigate to the Airflow directory:
+    ```bash
+    cd airflow
+    ```
 
-sed -i 's#sqlite:////home/ubuntu/airflow/airflow.db#postgresql+psycopg2://airflow:airflow@localhost/airflow#g' airflow.cfg
-Verify the SQL Alchemy connection string:
+16. Replace the connection string in the `airflow.cfg` file to use PostgreSQL instead of SQLite:
+    ```bash
+    sed -i 's#sqlite:////home/ubuntu/airflow/airflow.db#postgresql+psycopg2://airflow:airflow@localhost/airflow#g' airflow.cfg
+    ```
 
-grep sql_alchemy airflow.cfg
-Check the executor configuration:
+17. Verify the SQL Alchemy connection string:
+    ```bash
+    grep sql_alchemy airflow.cfg
+    ```
 
-grep executor airflow.cfg
-Replace SequentialExecutor with LocalExecutor:
+18. Check the executor configuration:
+    ```bash
+    grep executor airflow.cfg
+    ```
 
-sed -i 's#SequentialExecutor#LocalExecutor#g' airflow.cfg
-Re-initialize the Airflow database:
+19. Replace `SequentialExecutor` with `LocalExecutor`:
+    ```bash
+    sed -i 's#SequentialExecutor#LocalExecutor#g' airflow.cfg
+    ```
 
-airflow db init
-Create an Airflow user:
+20. Re-initialize the Airflow database:
+    ```bash
+    airflow db init
+    ```
 
-airflow users create -u airflow -f airflow -l airflow -r Admin -e airflow@gmail.com
-Enter Password: airflow
-Repeat Password: airflow
-Update security group inbound rules in your EC2 instance:
+21. Create an Airflow user:
+    ```bash
+    airflow users create -u airflow -f airflow -l airflow -r Admin -e airflow@gmail.com
+    ```
+    - **Enter Password**: `airflow`
+    - **Repeat Password**: `airflow`
 
-Type: Custom TCP
-Port Range: 8080
-Source: Anywhere (IPV4)
-Save the rules.
-Start the Airflow webserver:
+22. Update security group inbound rules in your EC2 instance:
+    - **Type**: Custom TCP
+    - **Port Range**: 8080
+    - **Source**: Anywhere (IPV4)
+    - **Save** the rules.
 
-airflow webserver &
-Start the Airflow scheduler:
+23. Start the Airflow webserver:
+    ```bash
+    airflow webserver &
+    ```
 
-airflow scheduler
-Copy the public IPv4 DNS of your EC2 instance and open it in your browser with port 8080:
+24. Start the Airflow scheduler:
+    ```bash
+    airflow scheduler
+    ```
 
-http://your-ec2-public-ip:8080
+25. Copy the public IPv4 DNS of your EC2 instance and open it in your browser with port `8080`:
+    ```text
+    http://your-ec2-public-ip:8080
+    ```
 Use below dag code as a test. make sure to mkdir dag folder and then put this .py script in there!
-
+```text
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime
@@ -115,3 +159,5 @@ start = DummyOperator(task_id='start', dag=dag)
 end = DummyOperator(task_id='end', dag=dag)
 
 start >> end
+
+ ```
